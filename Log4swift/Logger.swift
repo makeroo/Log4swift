@@ -46,6 +46,7 @@ A logger is identified by a UTI identifier, it defines a threshold level and a d
   public let identifier: String
   
   internal var parent: Logger?
+  internal var inherit: Bool
   
   private var thresholdLevelStorage: LogLevel
   private var appendersStorage: [Appender]
@@ -56,6 +57,9 @@ A logger is identified by a UTI identifier, it defines a threshold level and a d
   @objc
   public var asynchronous: Bool {
     get {
+      if !inherit {
+        return self.asynchronousStorage
+      }
       if let parent = self.parent {
         return parent.asynchronous
       } else {
@@ -75,6 +79,9 @@ A logger is identified by a UTI identifier, it defines a threshold level and a d
   @objc
   public var thresholdLevel: LogLevel {
     get {
+      if !self.inherit {
+        return self.thresholdLevelStorage
+      }
       if let parent = self.parent {
         return parent.thresholdLevel
       } else {
@@ -91,6 +98,9 @@ A logger is identified by a UTI identifier, it defines a threshold level and a d
   @objc
   public var appenders: [Appender] {
     get {
+      if !self.inherit {
+        return self.appendersStorage
+      }
       if let parent = self.parent {
         return parent.appenders
       } else {
@@ -111,6 +121,7 @@ A logger is identified by a UTI identifier, it defines a threshold level and a d
     self.identifier = identifier
     self.thresholdLevelStorage = level
     self.appendersStorage = appenders
+    self.inherit = false
   }
 
   @objc
@@ -124,6 +135,7 @@ A logger is identified by a UTI identifier, it defines a threshold level and a d
   public convenience init(parentLogger: Logger, identifier: String) {
     self.init(identifier: identifier, level: parentLogger.thresholdLevel, appenders: [Appender]() + parentLogger.appenders)
     self.parent = parentLogger
+    self.inherit = true
   }
   
   /// Updates the logger with the content of the configuration dictionary.
@@ -299,12 +311,16 @@ A logger is identified by a UTI identifier, it defines a threshold level and a d
   }
   
   private func breakDependencyWithParent() {
+    if !self.inherit {
+      return
+    }
+    self.inherit = false
     guard let parent = self.parent else {
       return
     }
     self.thresholdLevelStorage = parent.thresholdLevel
     self.appendersStorage = parent.appenders
-    self.parent = nil
+//    self.parent = nil
   }
 
   private final class func createDefaultAppenders() -> [Appender] {
