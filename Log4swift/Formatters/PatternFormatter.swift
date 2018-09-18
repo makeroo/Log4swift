@@ -209,7 +209,7 @@ Available markers are :
         generatedClosure = {(parameters, message, info) in
           let result: String
           let format = parameters["format"] as? String ?? "%F %T"
-          let timestamp = info[.Timestamp] as? TimeInterval ?? NSDate().timeIntervalSince1970
+          let timestamp = info[LogInfoTimestamp] as? TimeInterval ?? NSDate().timeIntervalSince1970
           var secondsSinceEpoch = Int(timestamp)
           let date = withUnsafePointer(to: &secondsSinceEpoch) {
             localtime($0)
@@ -227,7 +227,7 @@ Available markers are :
         generatedClosure = {(parameters, message, info) in
           let result: String
           let date: Date
-          if let timestamp = info[.Timestamp] as? Double {
+          if let timestamp = info[LogInfoTimestamp] as? Double {
             date = Date(timeIntervalSince1970: timestamp)
           } else {
             date = Date()
@@ -238,38 +238,38 @@ Available markers are :
         }
       case "l":
         generatedClosure = {(parameters, message, info) in
-          let logLevel = info[.LogLevel] ?? "-"
+          let logLevel = info[LogInfoLogLevel] as? CustomStringConvertible ?? "-"
           return processCommonParameters(logLevel, parameters: parameters)
         }
       case "n":
         generatedClosure = {(parameters, message, info) in
-          let loggerName = info[.LoggerName] ?? "-"
+          let loggerName = info[LogInfoLoggerName] as? CustomStringConvertible ?? "-"
           return processCommonParameters(loggerName, parameters: parameters)
         }
       case "L":
         generatedClosure = {(parameters, message, info) in
-          let line = info[.FileLine] ?? "-"
+          let line = info[LogInfoFileLine] as? CustomStringConvertible ?? "-"
           return processCommonParameters(line, parameters: parameters)
         }
       case "F":
         generatedClosure = {(parameters, message, info) in
-          let filename = info[.FileName] ?? "-"
+          let filename = info[LogInfoFileName] as? CustomStringConvertible ?? "-"
           return processCommonParameters(filename, parameters: parameters)
         }
       case "f":
         generatedClosure = {(parameters, message, info) in
-          let filename = NSString(string: (info[.FileName] as? String ?? "-")).lastPathComponent
+          let filename = NSString(string: (info[LogInfoFileName] as? String ?? "-")).lastPathComponent
           return processCommonParameters(filename, parameters: parameters)
         }
       case "M":
         generatedClosure = {(parameters, message, info) in
-          let function = info[.Function] ?? "-"
+          let function = info[LogInfoFunction] as? CustomStringConvertible ?? "-"
           return processCommonParameters(function, parameters: parameters)
         }
       case "t":
         generatedClosure = {(parameters, message, info) in
           let threadId: String
-          if let tid = info[.ThreadId] as? UInt64 {
+          if let tid = info[LogInfoThreadId] as? UInt64 {
             threadId = String(tid, radix: 16, uppercase: false)
           }
           else {
@@ -279,7 +279,7 @@ Available markers are :
         }
       case "T":
         generatedClosure = {(parameters, message, info) in
-          let threadName = info[.ThreadName] ?? "-"
+          let threadName = info[LogInfoThreadName] as? CustomStringConvertible ?? "-"
           return processCommonParameters(threadName, parameters: parameters)
         }
       case "m":

@@ -129,7 +129,7 @@ public class NSLoggerAppender : Appender {
   
   public override func performLog(_ log: String, level: LogLevel, info: LogInfoDictionary) {
     var loggerId = ""
-    if let safeLoggerId = info[LogInfoKeys.LoggerName] {
+    if let safeLoggerId = info[LogInfoLoggerName] as? String {
       loggerId = safeLoggerId.description
     }
     LogMessageRawToF(self.logger, nil, 0, nil, loggerId, Int32(level.rawValue), log)

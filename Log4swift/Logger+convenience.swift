@@ -31,63 +31,57 @@ extension Logger {
 
   /// Logs the provided message with a trace level using the root logger of the shared logger factory
   public class func trace(_ format: String, _ args: CVarArg...) {
-		let formattedMessage = format.format(args: args)
-		LoggerFactory.sharedInstance.rootLogger.log(message: formattedMessage, level: LogLevel.Trace)
+		LoggerFactory.sharedInstance.rootLogger.log(format: format, args, level: LogLevel.Trace)
   }
   /// Logs the provided message with a debug level using the root logger of the shared logger factory
   public class func debug(_ format: String, _ args: CVarArg...) {
-    let formattedMessage = format.format(args: args)
-    LoggerFactory.sharedInstance.rootLogger.log(message: formattedMessage, level: LogLevel.Debug)
+    LoggerFactory.sharedInstance.rootLogger.log(format: format, args, level: LogLevel.Debug)
   }
   /// Logs the provided message with a info level using the root logger of the shared logger factory
   public class func info(_ format: String, _ args: CVarArg...) {
-    let formattedMessage = format.format(args: args)
-    LoggerFactory.sharedInstance.rootLogger.log(message: formattedMessage, level: LogLevel.Info)
+    LoggerFactory.sharedInstance.rootLogger.log(format: format, args, level: LogLevel.Info)
   }
   /// Logs the provided message with a warning level using the root logger of the shared logger factory
   public class func warning(_ format: String, _ args: CVarArg...) {
-    let formattedMessage = format.format(args: args)
-    LoggerFactory.sharedInstance.rootLogger.log(message: formattedMessage, level: LogLevel.Warning)
+    LoggerFactory.sharedInstance.rootLogger.log(format: format, args, level: LogLevel.Warning)
   }
   /// Logs the provided message with a error level using the root logger of the shared logger factory
   public class func error(_ format: String, _ args: CVarArg...) {
-    let formattedMessage = format.format(args: args)
-    LoggerFactory.sharedInstance.rootLogger.log(message: formattedMessage, level: LogLevel.Error)
+    LoggerFactory.sharedInstance.rootLogger.log(format: format, args, level: LogLevel.Error)
   }
   /// Logs the provided message with a fatal level using the root logger of the shared logger factory
   public class func fatal(_ format: String, _ args: CVarArg...) {
-    let formattedMessage = format.format(args: args)
-    LoggerFactory.sharedInstance.rootLogger.log(message: formattedMessage, level: LogLevel.Fatal)
+    LoggerFactory.sharedInstance.rootLogger.log(format: format, args, level: LogLevel.Fatal)
   }
 
   /// Logs a the message returned by the closer with a trace level using the root logger of the shared logger factory
   /// If the logger's or appender's configuration prevents the message to be issued, the closure will not be called.
-  @nonobjc public class func trace(closure: @escaping () -> (String)) {
+  @nonobjc public class func trace(closure: @escaping () -> (String, [String:Any]?)) {
 		LoggerFactory.sharedInstance.rootLogger.log(closure: closure, level: .Trace)
   }
   /// Logs a the message returned by the closer with a debug level using the root logger of the shared logger factory
   /// If the logger's or appender's configuration prevents the message to be issued, the closure will not be called.
-  @nonobjc public class func debug(closure: @escaping () -> (String)) {
+  @nonobjc public class func debug(closure: @escaping () -> (String, [String:Any]?)) {
     LoggerFactory.sharedInstance.rootLogger.log(closure: closure, level: .Debug)
   }
   /// Logs a the message returned by the closer with an info level using the root logger of the shared logger factory
   /// If the logger's or appender's configuration prevents the message to be issued, the closure will not be called.
-  @nonobjc public class func info(closure: @escaping () -> (String)) {
+  @nonobjc public class func info(closure: @escaping () -> (String, [String:Any]?)) {
     LoggerFactory.sharedInstance.rootLogger.log(closure: closure, level: .Info)
   }
   /// Logs a the message returned by the closer with a warning level using the root logger of the shared logger factory
   /// If the logger's or appender's configuration prevents the message to be issued, the closure will not be called.
-  @nonobjc public class func warning(closure: @escaping () -> (String)) {
+  @nonobjc public class func warning(closure: @escaping () -> (String, [String:Any]?)) {
     LoggerFactory.sharedInstance.rootLogger.log(closure: closure, level: .Warning)
   }
   /// Logs a the message returned by the closer with an error level using the root logger of the shared logger factory
   /// If the logger's or appender's configuration prevents the message to be issued, the closure will not be called.
-  @nonobjc public class func error(closure: @escaping () -> (String)) {
+  @nonobjc public class func error(closure: @escaping () -> (String, [String:Any]?)) {
     LoggerFactory.sharedInstance.rootLogger.log(closure: closure, level: .Error)
   }
   /// Logs a the message returned by the closer with a fatal level using the root logger of the shared logger factory
   /// If the logger's or appender's configuration prevents the message to be issued, the closure will not be called.
-  @nonobjc public class func fatal(closure: @escaping () -> (String)) {
+  @nonobjc public class func fatal(closure: @escaping () -> (String, [String:Any]?)) {
     LoggerFactory.sharedInstance.rootLogger.log(closure: closure, level: .Fatal)
   }
   

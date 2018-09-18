@@ -176,63 +176,57 @@ A logger is identified by a UTI identifier, it defines a threshold level and a d
 
   /// Logs the provided message with a trace level.
   @nonobjc public func trace(_ format: String, _ args: CVarArg..., file: String = #file, line: Int = #line, function: String = #function) {
-		let formattedMessage = format.format(args: args)
-		self.log(message: formattedMessage, level: LogLevel.Trace, file: file, line: line, function: function)
+    self.log(format: format, args, level: LogLevel.Trace, file: file, line: line, function: function)
   }
   /// Logs the provided message with a debug level.
   @nonobjc public func debug(_ format: String, _ args: CVarArg..., file: String = #file, line: Int = #line, function: String = #function) {
-    let formattedMessage = format.format(args: args)
-    self.log(message: formattedMessage, level: LogLevel.Debug, file: file, line: line, function: function)
+    self.log(format: format, args, level: LogLevel.Debug, file: file, line: line, function: function)
   }
   /// Logs the provided message with an info level
   @nonobjc public func info(_ format: String, _ args: CVarArg..., file: String = #file, line: Int = #line, function: String = #function) {
-    let formattedMessage = format.format(args: args)
-    self.log(message: formattedMessage, level: LogLevel.Info, file: file, line: line, function: function)
+    self.log(format: format, args, level: LogLevel.Info, file: file, line: line, function: function)
   }
   /// Logs the provided message with a warning level
   @nonobjc public func warning(_ format: String, _ args: CVarArg..., file: String = #file, line: Int = #line, function: String = #function) {
-    let formattedMessage = format.format(args: args)
-    self.log(message: formattedMessage, level: LogLevel.Warning, file: file, line: line, function: function)
+    self.log(format: format, args, level: LogLevel.Warning, file: file, line: line, function: function)
   }
   /// Logs the provided message with an error level
   @nonobjc public func error(_ format: String, _ args: CVarArg..., file: String = #file, line: Int = #line, function: String = #function) {
-    let formattedMessage = format.format(args: args)
-    self.log(message: formattedMessage, level: LogLevel.Error, file: file, line: line, function: function)
+    self.log(format: format, args, level: LogLevel.Error, file: file, line: line, function: function)
   }
   /// Logs the provided message with a fatal level
   @nonobjc public func fatal(_ format: String, _ args: CVarArg..., file: String = #file, line: Int = #line, function: String = #function) {
-    let formattedMessage = format.format(args: args)
-    self.log(message: formattedMessage, level: LogLevel.Fatal, file: file, line: line, function: function)
+    self.log(format: format, args, level: LogLevel.Fatal, file: file, line: line, function: function)
   }
 
   /// Logs a the message returned by the closure with a debug level
   /// If the logger's or appender's configuration prevents the message to be issued, the closure will not be called.
-  @nonobjc public func trace(file: String = #file, line: Int = #line, function: String = #function, closure: @escaping () -> String) {
+  @nonobjc public func trace(file: String = #file, line: Int = #line, function: String = #function, closure: @escaping () -> (String, [String:Any]?)) {
 		self.log(closure: closure, level: LogLevel.Trace, file: file, line: line, function: function)
   }
   /// Logs a the message returned by the closure with a debug level
   /// If the logger's or appender's configuration prevents the message to be issued, the closure will not be called.
-  @nonobjc public func debug(file: String = #file, line: Int = #line, function: String = #function, closure: @escaping () -> String) {
+  @nonobjc public func debug(file: String = #file, line: Int = #line, function: String = #function, closure: @escaping () -> (String, [String:Any]?)) {
     self.log(closure: closure, level: LogLevel.Debug, file: file, line: line, function: function)
   }
   /// Logs a the message returned by the closure with an info level
   /// If the logger's or appender's configuration prevents the message to be issued, the closure will not be called.
-  @nonobjc public func info(file: String = #file, line: Int = #line, function: String = #function, closure: @escaping () -> String) {
+  @nonobjc public func info(file: String = #file, line: Int = #line, function: String = #function, closure: @escaping () -> (String, [String:Any]?)) {
     self.log(closure: closure, level: LogLevel.Info, file: file, line: line, function: function)
   }
   /// Logs a the message returned by the closure with a warning level
   /// If the logger's or appender's configuration prevents the message to be issued, the closure will not be called.
-  @nonobjc public func warning(file: String = #file, line: Int = #line, function: String = #function, closure: @escaping () -> String) {
+  @nonobjc public func warning(file: String = #file, line: Int = #line, function: String = #function, closure: @escaping () -> (String, [String:Any]?)) {
     self.log(closure: closure, level: LogLevel.Warning, file: file, line: line, function: function)
   }
   /// Logs a the message returned by the closure with an error level
   /// If the logger's or appender's configuration prevents the message to be issued, the closure will not be called.
-  @nonobjc public func error(file: String = #file, line: Int = #line, function: String = #function, closure: @escaping () -> String) {
+  @nonobjc public func error(file: String = #file, line: Int = #line, function: String = #function, closure: @escaping () -> (String, [String:Any]?)) {
     self.log(closure: closure, level: LogLevel.Error, file: file, line: line, function: function)
   }
   /// Logs a the message returned by the closure with a fatal level
   /// If the logger's or appender's configuration prevents the message to be issued, the closure will not be called.
-  @nonobjc public func fatal(file: String = #file, line: Int = #line, function: String = #function, closure: @escaping () -> String) {
+  @nonobjc public func fatal(file: String = #file, line: Int = #line, function: String = #function, closure: @escaping () -> (String, [String:Any]?)) {
     self.log(closure: closure, level: LogLevel.Fatal, file: file, line: line, function: function)
   }
   
@@ -242,29 +236,64 @@ A logger is identified by a UTI identifier, it defines a threshold level and a d
       shouldLog || level.rawValue >= currentAppender.thresholdLevel.rawValue
     }
   }
-  
-  @nonobjc internal func log(message: String, level: LogLevel, file: String? = nil, line: Int? = nil, function: String? = nil) {
+
+  @nonobjc internal func log(message: String, info args: [String:Any]?, level: LogLevel, file: String? = nil, line: Int? = nil, function: String? = nil) {
     if(self.willIssueLogForLevel(level)) {
       var info: LogInfoDictionary = [
-        .LoggerName: self.identifier,
-        .LogLevel: level,
-        .Timestamp: NSDate().timeIntervalSince1970,
-        .ThreadId: currentThreadId(),
-        .ThreadName: currentThreadName()
-      ]
+                LogInfoLoggerName: self.identifier,
+                LogInfoLogLevel: level,
+                LogInfoTimestamp: NSDate().timeIntervalSince1970,
+                LogInfoThreadId: currentThreadId(),
+                LogInfoThreadName: currentThreadName()
+        ]
       if let file = file {
-        info[.FileName] = file
+        info[LogInfoFileName] = file
       }
       if let line = line {
-        info[.FileLine] = line
+        info[LogInfoFileLine] = line
       }
       if let function = function {
-        info[.Function] = function
+        info[LogInfoFunction] = function
+      }
+
+      if let additionalInfo = args {
+        info.merge(additionalInfo, uniquingKeysWith: {(first, _) in first})
       }
 
       let logClosure = {
         for currentAppender in self.appenders {
-					currentAppender.log(message, level:level, info: info)
+          currentAppender.log(message, level:level, info: info)
+        }
+      }
+
+      self.executeLogClosure(logClosure)
+    }
+  }
+
+  @nonobjc internal func log(format: String, _ args: CVarArg..., level: LogLevel, file: String? = nil, line: Int? = nil, function: String? = nil) {
+    if(self.willIssueLogForLevel(level)) {
+      var info: LogInfoDictionary = [
+        LogInfoLoggerName: self.identifier,
+        LogInfoLogLevel: level,
+        LogInfoTimestamp: NSDate().timeIntervalSince1970,
+        LogInfoThreadId: currentThreadId(),
+        LogInfoThreadName: currentThreadName()
+      ]
+      if let file = file {
+        info[LogInfoFileName] = file
+      }
+      if let line = line {
+        info[LogInfoFileLine] = line
+      }
+      if let function = function {
+        info[LogInfoFunction] = function
+      }
+
+      let formattedMessage = buildLogRecord(format, args, info:&info)
+
+      let logClosure = {
+        for currentAppender in self.appenders {
+					currentAppender.log(formattedMessage, level:level, info: info)
         }
       }
 
@@ -272,27 +301,32 @@ A logger is identified by a UTI identifier, it defines a threshold level and a d
     }
   }
   
-  @nonobjc internal func log(closure: @escaping () -> (String), level: LogLevel, file: String? = nil, line: Int? = nil, function: String? = nil) {
+  @nonobjc internal func log(closure: @escaping () -> (String, [String:Any]?), level: LogLevel, file: String? = nil, line: Int? = nil, function: String? = nil) {
     if(self.willIssueLogForLevel(level)) {
       var info: LogInfoDictionary = [
-        .LoggerName: self.identifier,
-        .LogLevel: level,
-        .Timestamp: NSDate().timeIntervalSince1970,
-        .ThreadId: currentThreadId(),
-        .ThreadName: currentThreadName()
+        LogInfoLoggerName: self.identifier,
+        LogInfoLogLevel: level,
+        LogInfoTimestamp: NSDate().timeIntervalSince1970,
+        LogInfoThreadId: currentThreadId(),
+        LogInfoThreadName: currentThreadName()
       ]
       if let file = file {
-        info[.FileName] = file
+        info[LogInfoFileName] = file
       }
       if let line = line {
-        info[.FileLine] = line
+        info[LogInfoFileLine] = line
       }
       if let function = function {
-        info[.Function] = function
+        info[LogInfoFunction] = function
       }
 
       let logClosure = {
-        let logMessage = closure()
+        let (logMessage, additionalInfoOpt) = closure()
+
+        if let additionalInfo = additionalInfoOpt {
+            info.merge(additionalInfo, uniquingKeysWith: {(first, _) in first})
+        }
+
         for currentAppender in self.appenders {
 					currentAppender.log(logMessage, level:level, info: info)
         }

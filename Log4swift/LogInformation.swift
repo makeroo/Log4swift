@@ -21,18 +21,16 @@
 /**
 Keys used in the information dictionary attached to log messages
 */
-public enum LogInfoKeys {
-  case LogLevel
-  case LoggerName
-  case FileName
-  case FileLine
-  case Function
-  case Timestamp
-  case ThreadId
-  case ThreadName
-}
+let LogInfoLogLevel = "LogLevel"
+let LogInfoLoggerName = "LoggerName"
+let LogInfoFileName = "FileName"
+let LogInfoFileLine = "FileLine"
+let LogInfoFunction = "Function"
+let LogInfoTimestamp = "Timestamp"
+let LogInfoThreadId = "ThreadId"
+let LogInfoThreadName = "ThreadName"
 
 /**
 The definition of the type used to attach meta informations to log messages
 */
-public typealias LogInfoDictionary = Dictionary<LogInfoKeys, CustomStringConvertible>
+public typealias LogInfoDictionary = Dictionary<String, Any>

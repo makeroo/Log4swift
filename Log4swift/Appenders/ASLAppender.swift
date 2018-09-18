@@ -33,7 +33,7 @@ public class ASLAppender : Appender {
   
   public override func performLog(_ log: String, level: LogLevel, info: LogInfoDictionary) {
     let category: String
-    if let categoryFromInfo = info[LogInfoKeys.LoggerName] {
+    if let categoryFromInfo = info[LogInfoLoggerName] as? CustomStringConvertible {
       category = categoryFromInfo.description
     } else {
       category = "Undefined"
