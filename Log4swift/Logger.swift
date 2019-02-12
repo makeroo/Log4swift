@@ -270,7 +270,7 @@ A logger is identified by a UTI identifier, it defines a threshold level and a d
     }
   }
 
-  @nonobjc internal func log(format: String, _ args: CVarArg..., level: LogLevel, file: String? = nil, line: Int? = nil, function: String? = nil) {
+  @nonobjc internal func log(format: String, _ args: [CVarArg], level: LogLevel, file: String? = nil, line: Int? = nil, function: String? = nil) {
     if(self.willIssueLogForLevel(level)) {
       var info: LogInfoDictionary = [
         LogInfoLoggerName: self.identifier,
